@@ -16,6 +16,7 @@ import scrapy
 class ArticleItem(scrapy.Item):
     url = scrapy.Field()
     name = scrapy.Field()
+    text = scrapy.Field()
 
 # class DmozItem(scrapy.Item):
 #     title = scrapy.Field()

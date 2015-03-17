@@ -17,6 +17,7 @@ class NHLSpider(CrawlSpider):
         article = ArticleItem()
         article['url'] = response.url
         article['name'] = response.xpath("//h1/text()").extract()
+        article['text'] = response.xpath("//div[@class='articleText']/text()").extract()
         return article
     
 # class MininovaSpider(CrawlSpider):

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from scrapy.settings.default_settings import LOG_ENABLED
 
 # Scrapy settings for tutorial project
 #
@@ -12,6 +13,7 @@ BOT_NAME = 'tutorial'
 
 SPIDER_MODULES = ['tutorial.spiders']
 NEWSPIDER_MODULE = 'tutorial.spiders'
+#LOG_ENABLED = False
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'tutorial (+http://www.yourdomain.com)'
