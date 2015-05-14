@@ -8,7 +8,7 @@ from collections import defaultdict
  
  
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///dbgood'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db'
 
 db = SQLAlchemy(app)
        
@@ -42,13 +42,7 @@ class Cooccurrences(db.Model):
  
 @app.route("/")
 def hello():
-    user = {'nickname': 'Miguel'}  # fake user
- 
- 
-    return render_template('index.html',
-                           title='Home',
-                           user=user)
-    #return "Hello World!"
+    return "Welcome to the hater score"
  
 #@app.route('/signup', methods=['POST'])
 @app.route('/getentities')
@@ -107,8 +101,9 @@ def calculate_cooccurrences():
         for i in range(len(entities)):
             for j in range(i,len(entities)):
                 entity1, entity2 = [entities[i].text,entities[j].text]
-                matrix[entity1][entity2] +=1
-                matrix[entity2][entity1] +=1
+                if entity1 != entity2: #work around for the case when the same entity is present twice in article
+                    matrix[entity1][entity2] +=1
+                    matrix[entity2][entity1] +=1
 
                 
     #Store the co-occurence matrix in the db
@@ -123,19 +118,19 @@ def calculate_cooccurrences():
 
 @app.route('/get_cooccurrences')
 def get_cooccurrences():
-    cooccurences = Cooccurrences.query.all()
-    return render_template('message.html', title='Home', entities = cooccurences)
+    cooccurences = Cooccurrences.query.order_by(Cooccurrences.count.desc()).all()
+    return render_template('occurrences.html', title='Home', entities = cooccurences)
  
 #calculate_cooccurrences() 
 
-test = Cooccurrences.query.all()
-for hope in test:
-    print(hope.entity1)
-    print(hope.entity2)
-    print(hope.count)
+# test = Cooccurrences.query.all()
+# for hope in test:
+#     print(hope.entity1)
+#     print(hope.entity2)
+#     print(hope.count)
 
 #when debugging, comment out the line below 
-#if __name__ == "__main__":
-#    app.run()
+if __name__ == "__main__":
+    app.run()
 
 
