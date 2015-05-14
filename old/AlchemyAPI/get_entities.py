@@ -58,3 +58,8 @@ for current_entity in all_entities:
     for attribute in attributes:
         print(current_entity.__getattribute__(attribute))
     print('')
+    
+    
+#if entity not in all entities
+#add it to all entities
+#else, increment the occurance count, and updatewd sentiment average (by making use of occurence count)

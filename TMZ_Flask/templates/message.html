@@ -1,0 +1,18 @@
+<html>
+  <head>
+    <title>{{ title }} - microblog</title>
+  </head>
+  <body>
+	  <ul>
+        {% for entity in entities %}
+        <li>{{entity.text}}
+		<ul>
+			<li>{{entity.e_type}}</li>
+			<li>{{entity.sentiment}}</li>
+			<li>{{entity.sentiment_score}}</li>
+		</ul></li>
+		
+        {% endfor %}
+      </ul>
+  </body>
+</html>
