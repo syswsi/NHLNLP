@@ -1,6 +1,15 @@
 # TMZHater
 Letting you figure out how much hate your favorite celeb gets on TMZ.
 
+# Getting Started:
+
+You will need to install the following:
+
+Sign up for your account on the Alchemy Website: http://www.alchemyapi.com/api/register.html
+Download Eclpise: https://eclipse.org/
+Download Pydev from the Eclipse Marketplace
+Download Pydev from the Eclipse Marketplace
+
 # Running the existing code
 
 0) Install Flask and SQl-Alchemy (AlchemyAPI package and API key is include with the sample code)
@@ -10,10 +19,6 @@ Letting you figure out how much hate your favorite celeb gets on TMZ.
 4) Go to http://127.0.0.1:5000/calculate_cooccurrences to calculate how often two entities occur together
 5) Go to http://127.0.0.1:5000/get_cooccurrences to view the results
 
-# Getting Started:
 
-You will need to install the following:
-
-Sign up for your account on the Alchemy Website: http://www.alchemyapi.com/api/register.html
 
 
