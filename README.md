@@ -12,7 +12,7 @@ Download Pydev from the Eclipse Marketplace
 
 # Running the existing code
 
-0) Install Flask and SQl-Alchemy (AlchemyAPI package and API key is include with the sample code)
+0) Install Flask (pip install Flask)and SQl-Alchemy (pip install flask-sqlalchemy) (AlchemyAPI package and API key is include with the sample code)
 1) Run create_db.py to create the database
 2) In command prompt, enter python flk.py to start the web server
 3) Go to http://127.0.0.1:5000/getentities to perform NER / SA 
