@@ -1,18 +1,16 @@
 from flask import Flask
 from flask import render_template
-#from models import db
 from flask_sqlalchemy import SQLAlchemy
-
 from alchemyapi import AlchemyAPI
 from collections import defaultdict
 
- 
- 
+#Some code required for flask
+#Instantiate app and db  
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db'
-
 db = SQLAlchemy(app)
-       
+
+#Database model definition        
 class Entities(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     article_id = db.Column(db.Integer)
@@ -45,6 +43,7 @@ class Cooccurrences(db.Model):
 def hello():
     return "Welcome to the hater score"
  
+#using the Alchemy API, perform NER and SA and a list of articles 
 @app.route('/extract_entities')
 def extract_entities():
          
@@ -82,18 +81,23 @@ def extract_entities():
     
     return "Entities successfully extracted"    
 
+###Retrieves the entities from stored in the database and averages their score
 @app.route('/retrieve_entities')
 def retrieve_entities():
     avg_sentiment_scores = []
+    #retrieve the entities
     all_entities = Entities.query.all()
+    #create a list of unique entity names
     unique_entities_names = []
     [unique_entities_names.append(ent.name) for ent in all_entities if ent.name not in unique_entities_names]
+    #calculate the average sentiment score for each unique entity
     for unique_entities_name in unique_entities_names:
         sentiment_scores = [entity.sentiment_score for entity in all_entities if entity.name == unique_entities_name] 
         avg_sentiment_score = sum(sentiment_scores)/len(sentiment_scores)
         avg_sentiment_scores.append((unique_entities_name,avg_sentiment_score))
     return render_template('avg_entity_scores.html', title='Average sentiment scores per entity', scores = avg_sentiment_scores )
-     
+
+#Calculate how often each possible combination of two entities appears in the same article     
 @app.route('/calculate_cooccurrences')
 def calculate_cooccurrences():
     #default dict enters value in dictionary if it doesn't exist instead of return an error
@@ -128,14 +132,14 @@ def calculate_cooccurrences():
     
     return "Co-occurrences calculated"
 
+#Retrieve the co-occurrence matrix from the database and display it 
 @app.route('/retrieve_cooccurrences')
 def retrieve_cooccurrences():
     cooccurences = Cooccurrences.query.order_by(Cooccurrences.count.desc()).all()
     return render_template('occurrences.html', title='Entity cooccurences', cooccurences = cooccurences)
 
-#calculate_cooccurrences()
-
 #when debugging, comment out the line below 
+#run the web server
 if __name__ == "__main__":
     app.run()
 
