@@ -23,9 +23,12 @@ Download Pydev from the Help -> Eclipse Marketplace -> Search for "Python", then
  
 # Running the final project 
 
-0) Install Flask (from the command line, run "pip install Flask")and SQl-Alchemy (pip install flask-sqlalchemy) (AlchemyAPI package and API key is include with the sample code)
+0) Install package pre-requisistes
+	- Flask (from the command line, run "pip install Flask")
+	- SQl-Alchemy (pip install flask-sqlalchemy) (AlchemyAPI package and API key is include with the sample code)
+	- Requests (pip install requests)
 1) Run create_db.py to create the database
-2) In command prompt, enter python flk.py to start the web server
+2) In command prompt, cd to the directory containing flk.py and enter python flk.py to start the web server
 3) Go to http://127.0.0.1:5000/extract_entities to perform NER / SA and http://127.0.0.1:5000/extract_entities to view the results
 4) Go to http://127.0.0.1:5000/calculate_cooccurrences to calculate how often two entities occur together
 5) Go to http://127.0.0.1:5000/retrieve_cooccurrences to view the results
