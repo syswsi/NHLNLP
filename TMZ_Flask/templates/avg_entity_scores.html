@@ -1,0 +1,16 @@
+<html>
+  <head>
+    <title>{{ title }}</title>
+  </head>
+  <body>
+	  <table>
+		<tr><td>Entity</td><td>Sentiment Score</td></tr>
+        {% for score in scores %}
+		<tr>
+        <td>{{score[0]}}</td>
+		<td>{{score[1]}}</td>
+		</tr>
+        {% endfor %}
+      </table>
+  </body>
+</html>

@@ -2,6 +2,7 @@ from flask import Flask
 from flask import render_template
 #from models import db
 from flask_sqlalchemy import SQLAlchemy
+
 from alchemyapi import AlchemyAPI
 from collections import defaultdict
 
@@ -15,16 +16,16 @@ db = SQLAlchemy(app)
 class Entities(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     article_id = db.Column(db.Integer)
-    text = db.Column(db.String)
-    e_type = db.Column(db.String)
+    name = db.Column(db.String)
+    type = db.Column(db.String)
     relevance = db.Column(db.Float)
     sentiment = db.Column(db.String)
     sentiment_score = db.Column(db.Float)
 
-    def __init__(self, article_id, text, e_type, relevance, sentiment, sentiment_score):
+    def __init__(self, article_id, name, type, relevance, sentiment, sentiment_score):
         self.article_id = article_id
-        self.text = text
-        self.e_type = e_type
+        self.name = name
+        self.type = type
         self.relevance = relevance
         self.sentiment = sentiment
         self.sentiment_score = sentiment_score
@@ -44,9 +45,8 @@ class Cooccurrences(db.Model):
 def hello():
     return "Welcome to the hater score"
  
-#@app.route('/signup', methods=['POST'])
-@app.route('/getentities')
-def getentities():
+@app.route('/extract_entities')
+def extract_entities():
          
     #####Get Alchemy Response######
     demo_urls = ['http://www.nhl.com/ice/news.htm?id=758474&navid=nhl:topheads','http://www.nhl.com/gamecenter/en/recap?id=2014030227&navid=nhl:topheads']
@@ -66,7 +66,7 @@ def getentities():
             
         if response['status'] == 'OK':
             for id,entity in enumerate(response['entities']):
-                entity_text = entity['text'].encode('utf-8')
+                entity_name = entity['text'].encode('utf-8')
                 entity_type = entity['type']
                 entity_relevance =  entity['relevance']
                 entity_sentiment = entity['sentiment']['type']
@@ -76,58 +76,64 @@ def getentities():
                     entity_score = 0 #it has no entity score if it is neutral so just give it a zero score for consistency in db
             
                 #Store entities in db
-                e = Entities(article_id,entity_text, entity_type, entity_relevance,entity_sentiment,entity_score)
+                e = Entities(article_id,entity_name, entity_type, entity_relevance,entity_sentiment,entity_score)
                 db.session.add(e)
-                db.session.commit()
-
+            db.session.commit() #before it was in loop, see if it works outside of looop
     
-    return "fsfsadf"    
-     
-     
-      
-@app.route('/message/<article_id>')
-def message(article_id):
-    entities = Entities.query.filter_by(article_id = article_id).all()
-    return render_template('message.html', title='Home', entities = entities)
+    return "Entities successfully extracted"    
 
+@app.route('/retrieve_entities')
+def retrieve_entities():
+    avg_sentiment_scores = []
+    all_entities = Entities.query.all()
+    unique_entities_names = []
+    [unique_entities_names.append(ent.name) for ent in all_entities if ent.name not in unique_entities_names]
+    for unique_entities_name in unique_entities_names:
+        sentiment_scores = [entity.sentiment_score for entity in all_entities if entity.name == unique_entities_name] 
+        avg_sentiment_score = sum(sentiment_scores)/len(sentiment_scores)
+        avg_sentiment_scores.append((unique_entities_name,avg_sentiment_score))
+    return render_template('avg_entity_scores.html', title='Average sentiment scores per entity', scores = avg_sentiment_scores )
+     
 @app.route('/calculate_cooccurrences')
 def calculate_cooccurrences():
     #default dict enters value in dictionary if it doesn't exist instead of return an error
     #it also looks like we have a nested dictionary here
     num_articles = 2
     matrix = defaultdict(lambda : defaultdict(int))
+    ### Two entities co-occur together if they are present in the same article
+    ### So for each article
     for article_id in range(num_articles): 
+        ###Retrieve a list of entities in the article
         entities = Entities.query.filter_by(article_id = article_id).all()
-        for i in range(len(entities)):
-            for j in range(i,len(entities)):
-                entity1, entity2 = [entities[i].text,entities[j].text]
-                if entity1 != entity2: #work around for the case when the same entity is present twice in article
+        ###Remove any duplicate entities
+        unique_entities_names = []
+        [unique_entities_names.append(ent.name) for ent in entities if ent.name not in unique_entities_names]
+        
+        #populate the co-occurrence matrix  
+        for i in range(len(unique_entities_names)):
+            for j in range(i,len(unique_entities_names)):
+                if i != j: #so that we don't calculate co-occurrence with itself
+                    entity1, entity2 = [unique_entities_names[i],unique_entities_names[j]]
                     matrix[entity1][entity2] +=1
                     matrix[entity2][entity1] +=1
-
+                    
                 
     #Store the co-occurence matrix in the db
     for entity1 in matrix.iterkeys():
-        entity2 = matrix[entity1].keys()[0]
-        cooccurrence_count = matrix[entity1].values()[0]
-        c = Cooccurrences(entity1,entity2,cooccurrence_count) 
-        db.session.add(c)
-        db.session.commit()            
+        for k, entity2 in enumerate(matrix[entity1].keys()):
+            cooccurrence_count = matrix[entity1].values()[k]
+            c = Cooccurrences(entity1,entity2,cooccurrence_count) 
+            db.session.add(c)
+    db.session.commit()            
     
     return "Co-occurrences calculated"
 
-@app.route('/get_cooccurrences')
-def get_cooccurrences():
+@app.route('/retrieve_cooccurrences')
+def retrieve_cooccurrences():
     cooccurences = Cooccurrences.query.order_by(Cooccurrences.count.desc()).all()
-    return render_template('occurrences.html', title='Home', entities = cooccurences)
- 
-#calculate_cooccurrences() 
+    return render_template('occurrences.html', title='Entity cooccurences', cooccurences = cooccurences)
 
-# test = Cooccurrences.query.all()
-# for hope in test:
-#     print(hope.entity1)
-#     print(hope.entity2)
-#     print(hope.count)
+#calculate_cooccurrences()
 
 #when debugging, comment out the line below 
 if __name__ == "__main__":

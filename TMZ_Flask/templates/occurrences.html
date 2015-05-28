@@ -1,18 +1,22 @@
 <html>
   <head>
-    <title>{{ title }} - microblog</title>
+    <title>{{ title }}</title>
   </head>
   <body>
-	  <ul>
-        {% for entity in entities %}
-        <li>{{entity.text}}
-		<ul>
-			<li>{{entity.entity1}}</li>
-			<li>{{entity.entity2}}</li>
-			<li>{{entity.count}}</li>
-		</ul></li>
+	  <table>
+	  	<tr>
+			<td>Entity 1</td>
+			<td>Entity 2</td>
+			<td>Co-occurence Count</td>
+		</tr>
+        {% for cooccurence in cooccurences %}
+		<tr>
+			<td>{{cooccurence.entity1}}</td>
+			<td>{{cooccurence.entity2}}</td>
+			<td>{{cooccurence.count}}</td>
+		</tr>
 		
         {% endfor %}
-      </ul>
+      </table>
   </body>
 </html>
