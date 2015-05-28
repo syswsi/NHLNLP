@@ -7,11 +7,21 @@ You will need to install the following:
 
 Sign up for your account on the Alchemy Website: http://www.alchemyapi.com/api/register.html
 Download Eclipse: https://eclipse.org/
-Download Pydev from the Eclipse Marketplace
-
+Download Pydev from the Help -> Eclipse Marketplace -> Search for "Python", then click on pydev, select all, then click confirm
+   When I (Nick) installed PyDev I did: Help -> Install New software -> Search for "Pydev"
+ 
+ Manual config
+ Create new pydev project, click on link to configure interpreter
+ C:\Python27\python.exe
+ 
+ If pip is not working (and you have 2.7.9 installed)
+ - Add ;C:\Python27;C:\Python27\Scripts to Path environment variable
+ 
+ Make sure all is checked when asked to select folders to add to the python system path
+ 
 # Running the final project 
 
-0) Install Flask (pip install Flask)and SQl-Alchemy (pip install flask-sqlalchemy) (AlchemyAPI package and API key is include with the sample code)
+0) Install Flask (from the command line, run "pip install Flask")and SQl-Alchemy (pip install flask-sqlalchemy) (AlchemyAPI package and API key is include with the sample code)
 1) Run create_db.py to create the database
 2) In command prompt, enter python flk.py to start the web server
 3) Go to http://127.0.0.1:5000/extract_entities to perform NER / SA and http://127.0.0.1:5000/extract_entities to view the results
