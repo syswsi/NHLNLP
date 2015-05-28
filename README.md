@@ -5,7 +5,8 @@ Letting you figure out how much hate your favorite celeb gets on TMZ.
 
 You will need to install the following:
 
-Sign up for your account on the Alchemy Website: http://www.alchemyapi.com/api/register.html
+Sign up for an API key on the Alchemy Website: http://www.alchemyapi.com/api/register.html 
+-> You will receive an email with your own API key. Replace the API key in api_key.txt with your key.
 Download Eclipse: https://eclipse.org/
 Download Pydev from the Help -> Eclipse Marketplace -> Search for "Python", then click on pydev, select all, then click confirm
    When I (Nick) installed PyDev I did: Help -> Install New software -> Search for "Pydev"
