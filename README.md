@@ -17,6 +17,8 @@ Download Pydev from the Help -> Eclipse Marketplace -> Search for "Python", then
  If pip is not working (and you have 2.7.9 installed)
  - Add ;C:\Python27;C:\Python27\Scripts to Path environment variable
  
+ Make sure that the libraries you install via pip are pointed to in your interpreter
+ 
  Make sure all is checked when asked to select folders to add to the python system path
  
 # Running the final project 
