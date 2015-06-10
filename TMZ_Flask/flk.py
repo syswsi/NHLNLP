@@ -48,7 +48,9 @@ def hello():
 def extract_entities():
          
     #####Get Alchemy Response######
-    demo_urls = ['http://www.nhl.com/ice/news.htm?id=758474&navid=nhl:topheads','http://www.nhl.com/gamecenter/en/recap?id=2014030227&navid=nhl:topheads']
+    #demo_urls = ['http://www.nhl.com/ice/news.htm?id=758474&navid=nhl:topheads','http://www.nhl.com/gamecenter/en/recap?id=2014030227&navid=nhl:topheads']
+    file = open('tmzlinks.txt', 'r')
+    demo_urls = file.read().splitlines()
     for article_id,demo_url in enumerate(demo_urls):
         # Create the AlchemyAPI Object
         alchemyapi = AlchemyAPI()
