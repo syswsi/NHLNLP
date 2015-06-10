@@ -49,8 +49,9 @@ def extract_entities():
          
     #####Get Alchemy Response######
     #demo_urls = ['http://www.nhl.com/ice/news.htm?id=758474&navid=nhl:topheads','http://www.nhl.com/gamecenter/en/recap?id=2014030227&navid=nhl:topheads']
-    file = open('tmzlinks.txt', 'r')
-    demo_urls = file.read().splitlines()
+    links_file = open('tmzlinks.txt', 'r')
+    demo_urls = links_file.read().splitlines()
+    #print(demo_urls)
     for article_id,demo_url in enumerate(demo_urls):
         # Create the AlchemyAPI Object
         alchemyapi = AlchemyAPI()
@@ -58,16 +59,18 @@ def extract_entities():
             
         #Article text
         if response['status'] == 'OK':
-            footer_line_start = "NHL.com is the official web site of the National Hockey League" 
-            demo_text = response['text'].encode('utf-8') #save text here and make text calls instead of url calls later on
-            demo_text = demo_text.split(footer_line_start)[0] 
+            #footer_line_start = "NHL.com is the official web site of the National Hockey League" 
+            #demo_text = response['text'].encode('utf-8') #save text here and make text calls instead of url calls later on
+            demo_text = response['text'].encode('utf-8')
+            #demo_text = demo_text.split(footer_line_start)[0] 
             
         #Perform entity extraction
         response = alchemyapi.entities('text', demo_text, {'sentiment': 1}) #can replace with 'text', demo_text
             
         if response['status'] == 'OK':
             for id,entity in enumerate(response['entities']):
-                entity_name = entity['text'].encode('utf-8')
+                #entity_name = entity['text'].encode('utf-8') #this was causing bug when inserting into db
+                entity_name = entity['text']
                 entity_type = entity['type']
                 entity_relevance =  entity['relevance']
                 entity_sentiment = entity['sentiment']['type']
@@ -89,6 +92,7 @@ def retrieve_entities():
     avg_sentiment_scores = []
     #retrieve the entities
     all_entities = Entities.query.all()
+    #print(all_entities)
     #create a list of unique entity names
     unique_entities_names = []
     [unique_entities_names.append(ent.name) for ent in all_entities if ent.name not in unique_entities_names]
@@ -98,7 +102,7 @@ def retrieve_entities():
         avg_sentiment_score = sum(sentiment_scores)/len(sentiment_scores)
         avg_sentiment_scores.append((unique_entities_name,avg_sentiment_score))
     return render_template('avg_entity_scores.html', title='Average sentiment scores per entity', scores = avg_sentiment_scores )
-
+    
 #Calculate how often each possible combination of two entities appears in the same article     
 @app.route('/calculate_cooccurrences')
 def calculate_cooccurrences():
@@ -140,6 +144,8 @@ def retrieve_cooccurrences():
     cooccurences = Cooccurrences.query.order_by(Cooccurrences.count.desc()).all()
     return render_template('occurrences.html', title='Entity cooccurences', cooccurences = cooccurences)
 
+#extract_entities()
+#retrieve_entities()
 #when debugging, comment out the line below 
 #run the web server
 if __name__ == "__main__":
